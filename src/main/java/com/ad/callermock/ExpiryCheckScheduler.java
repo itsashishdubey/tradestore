@@ -25,6 +25,6 @@ public class ExpiryCheckScheduler {
         };
         //running timer task as daemon thread
         Timer timer = new Timer(true);
-        timer.scheduleAtFixedRate(timerTask, 0, 30*1000L);
+        timer.scheduleAtFixedRate(timerTask, 1000L, 30*1000L);
     }
 }
