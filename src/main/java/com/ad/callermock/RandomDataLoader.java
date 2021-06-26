@@ -2,6 +2,8 @@ package com.ad.callermock;
 
 import com.ad.model.TradeDetails;
 import com.ad.service.Receiver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +17,8 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 @Component
 public class RandomDataLoader {
+
+    private static final Logger logger = LoggerFactory.getLogger(RandomDataLoader.class);
 
     @Autowired
     private Receiver<TradeDetails> tradeReceiver;
@@ -34,6 +38,7 @@ public class RandomDataLoader {
 
     private void uploadData(){
 
+        logger.info("***********Loading new set of data***********");
 
         TradeDetails td =  createTradeDetails(randomId(), randomId(), randomDays());
         tradeReceiver.accept(td);
