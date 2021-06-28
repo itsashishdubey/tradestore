@@ -1,7 +1,7 @@
 package com.ad.core;
 
 import com.ad.handler.Processor;
-import com.ad.helper.MaturityDateException;
+import com.ad.helper.VersionException;
 import com.ad.model.TradeDetails;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,7 +43,7 @@ public class TradeExecutorThreadTest {
     public void testRunThrowsMaturityDateException() throws Exception {
         TradeDetails td = new TradeDetails();
         when(tradeTaskHandler.getTask()).thenReturn(td);
-        doThrow(new MaturityDateException("msg")).when(tradeProcessor).process(td);
+        doThrow(new VersionException("msg")).when(tradeProcessor).process(td);
 
         new Thread(() -> {
             tradeExecutorThread.run();

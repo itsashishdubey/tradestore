@@ -1,6 +1,6 @@
 package com.ad.handler;
 
-import com.ad.helper.MaturityDateException;
+import com.ad.helper.VersionException;
 import com.ad.model.TradeDetails;
 import com.ad.model.TradeDetailsDataTest;
 import com.ad.store.TradeStore;
@@ -50,14 +50,15 @@ public class TradeProcessorTest {
         Assert.assertFalse(newTrade.getExpired());
     }
 
-    @Test(expected = MaturityDateException.class)
-    public void testProcessPassedMaturityDate()  {
+    @Test
+    public void testProcessVersionException()  {
         TradeDetails td = TradeDetailsDataTest.getInvalidTrades().get(0);
         when(tradeMaturityDateValidator.validate(td)).thenReturn(false);
         tradeProcessor.process(td);
+        verify(lockManager, times(0)).getLockByTradeId(td.getTradeId());
     }
 
-    @Test
+    @Test(expected = VersionException.class)
     public void testProcessPreviousVersion()  {
 
         TradeDetails existingTrade = TradeDetailsDataTest.getValidTrades().get(0);
@@ -67,6 +68,5 @@ public class TradeProcessorTest {
         when(tradeVersionValidator.validate(newTrade, existingTrade)).thenReturn(false);
         when(tradeMaturityDateValidator.validate(newTrade)).thenReturn(true);
         tradeProcessor.process(newTrade);
-        verify(tradeStore, times(0)).addTrade(newTrade);
     }
 }

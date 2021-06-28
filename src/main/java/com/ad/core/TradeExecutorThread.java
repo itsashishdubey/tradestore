@@ -1,7 +1,7 @@
 package com.ad.core;
 
 import com.ad.handler.Processor;
-import com.ad.helper.MaturityDateException;
+import com.ad.helper.VersionException;
 import com.ad.model.TradeDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,11 +27,11 @@ public class TradeExecutorThread implements Runnable{
             try {
                 TradeDetails trade = tradeTaskHandler.getTask();
                 tradeProcessor.process(trade);
+            }catch (VersionException exp){
+                logger.error(exp.getMessage());
             } catch (InterruptedException e) {
                 logger.error("Error in reading the task", e);
                 Thread.currentThread().interrupt();
-            }catch (MaturityDateException exp){
-                logger.error(exp.getMessage());
             }
         }
 

@@ -1,6 +1,6 @@
 package com.ad.handler;
 
-import com.ad.helper.MaturityDateException;
+import com.ad.helper.VersionException;
 import com.ad.model.TradeDetails;
 import com.ad.store.TradeStore;
 import com.ad.validator.DateValidator;
@@ -40,7 +40,8 @@ public class TradeProcessor implements Processor<TradeDetails> {
     @Override
     public void process(TradeDetails tradeDetails){
         if(!tradeMaturityDateValidator.validate(tradeDetails)){
-            throw new MaturityDateException("[Validation failed] Trade is matured "+ tradeDetails);
+            logger.error("[Validation failed] Trade is matured {}", tradeDetails);
+            return;
         }
         Long tradeId = tradeDetails.getTradeId();
         ReentrantLock lock = lockManager.getLockByTradeId(tradeId);
@@ -49,8 +50,8 @@ public class TradeProcessor implements Processor<TradeDetails> {
             lock.lock();
             TradeDetails existingTrade = tradeStore.getTrade(tradeId);
             if (existingTrade != null && !tradeVersionValidator.validate(tradeDetails, existingTrade)) {
-                logger.error("[Validation failed] Older version received for TradeId {}, received version {}, existing version {}", tradeDetails.getTradeId()
-                        ,tradeDetails.getVersion(), existingTrade.getVersion());
+                throw new VersionException("[Validation failed] Older version received for TradeId " + tradeDetails.getTradeId()+ ", received version " +
+                        tradeDetails.getVersion() + ", existing version {}" + existingTrade.getVersion());
             } else {
                 tradeDetails.setCreatedDate(LocalDate.now());
                 tradeDetails.setExpired(false);
