@@ -51,7 +51,7 @@ public class TradeProcessor implements Processor<TradeDetails> {
             TradeDetails existingTrade = tradeStore.getTrade(tradeId);
             if (existingTrade != null && !tradeVersionValidator.validate(tradeDetails, existingTrade)) {
                 throw new VersionException("[Validation failed] Older version received for TradeId " + tradeDetails.getTradeId()+ ", received version " +
-                        tradeDetails.getVersion() + ", existing version {}" + existingTrade.getVersion());
+                        tradeDetails.getVersion() + ", existing version" + existingTrade.getVersion());
             } else {
                 tradeDetails.setCreatedDate(LocalDate.now());
                 tradeDetails.setExpired(false);
